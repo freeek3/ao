@@ -11,7 +11,7 @@ const tray = require('./src/tray');
 const update = require('./src/update');
 const url = require('./src/url');
 const win = require('./src/win');
-
+const touchbar = require('./src/touchbar');
 const {log} = console;
 
 require('electron-debug')({enabled: true});
@@ -62,6 +62,10 @@ function createMainWindow() {
     settings.set('lastURL', url);
   });
 
+  console.log('Im here#111');
+  aoWindow.setTouchBar(touchbar.create());
+  console.log('I was here #111');
+
   return aoWindow;
 }
 
@@ -79,10 +83,11 @@ app.on('ready', () => {
 
   const {webContents} = mainWindow;
 
+
+
   webContents.on('dom-ready', () => {
     const stylesheets = fs.readdirSync(file.style);
     stylesheets.forEach(x => webContents.insertCSS(readSheet(x)));
-
     if (settings.get('launchMinimized')) {
       mainWindow.minimize();
     } else {
@@ -100,6 +105,8 @@ app.on('ready', () => {
   if (!settings.get('disableAutoUpdateCheck')) {
     setInterval(() => update.auto(), time.ms(settings.get('updateCheckPeriod')));
   }
+
+  
 });
 
 process.on('uncaughtException', log);
